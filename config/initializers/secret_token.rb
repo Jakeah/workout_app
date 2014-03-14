@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-WorkoutApp::Application.config.secret_key_base = '324126c9c581265a4ed026bea902190c35f7f4f2d77e5de87865a36ec334f897a0a9a53ec1d043745cc7f64bb58f2ea7af753afa1811856e093639a3f3adc45f'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    #  Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+WorkoutApp::Application.config.secret_key_base = secure_token
